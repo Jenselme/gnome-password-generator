@@ -1,0 +1,49 @@
+03-17-2008 Chris Ladd <caladd@particlestorm.net>
+
+* Released version 1.6
+
+  Rewrote menu functionality to use the new GTK UIManager API.
+
+08-12-2007 Chris Ladd <caladd@particlestorm.net>
+
+* Released version 1.5
+
+  Added a new feature to select different character sets.
+  Added the ability to use urandom if available for more
+  secure password generation. Special thanks to Steve Tyler
+  for these new features and some deprecation fixes.
+
+06-07-2004 Chris Ladd <caladd@particlestorm.net>
+
+* Released version 1.4
+
+  Changed default pixmap to a png instead of an svg.
+
+04-05-2004 Chris Ladd <caladd@particlestorm.net>
+
+* Released version 1.3
+
+  Fixed a problem with the new build system.
+  
+04-05-2004 Chris Ladd <caladd@particlestorm.net>
+
+* Released version 1.2
+
+  Changed the install system to use make install. Special
+  thanks to Dag Wieers for the example Makefile and
+  Desktop Entry cleanups. Check out Dag's repository for
+  RPMs of the program.
+  
+03-15-2004 Chris Ladd <caladd@particlestorm.net>
+
+* Released version 1.1
+
+  A check is done for the proper version of PyGTK and
+  an error dialog is displayed if PyGTK needs to be
+  upgraded.
+
+03-08-2004 Chris Ladd <caladd@particlestorm.net>
+
+* Released version 1.0
+
+  First public release of the project.

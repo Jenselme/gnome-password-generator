@@ -1,0 +1,11 @@
+Basic installation
+==================
+
+1. `cd' to the directory that contains the package's
+   source code.
+
+2. Type `make' to build the program files.
+
+3. Type `sudo make install' to run the install script that
+   will install the program files into their correct
+   places.
