@@ -44,6 +44,28 @@ class CharacterSet:
         self.characters = characters
 
 
+def generate_password(password_length, password_count, character_set):
+    random_number_generator = get_random_numbers_generator()
+
+    for current_password in range(password_count):
+        password = ""
+        for current_character in range(password_length):
+            random_number = random_number_generator.randint(
+                0,
+                len(character_set) - 1
+            )
+            password += character_set[random_number]
+
+    return password
+
+
+def get_random_numbers_generator():
+    try:
+        return random.SystemRandom()
+    except NotImplementedError:
+        return random.Random()
+
+
 class Application(gnome.ui.App):
     def DeleteCallback(self, widget, event, data=None):
         return False
@@ -57,11 +79,12 @@ class Application(gnome.ui.App):
         buffer.delete(buffer.get_start_iter(), buffer.get_end_iter())
 
         # Generate the passwords
-        self.GeneratePasswords(
+        password = generate_password(
             self.length_spin_button.get_value_as_int(),
             self.count_spin_button.get_value_as_int(),
-            self.char_set_combo_box.get_active()
+            self.character_sets[self.char_set_combo_box.get_active()].characters
         )
+        self.PrintMessage(password+"\n")
 
     def AboutCallback(self, widget, data=None):
         gnome.ui.About(
@@ -74,25 +97,6 @@ class Application(gnome.ui.App):
             None,
             self.image.get_pixbuf()
         ).show()
-
-    def GeneratePasswords(
-            self,
-            password_length,
-            password_count,
-            character_set_ndx
-    ):
-        character_set = self.character_sets[character_set_ndx].characters
-
-        for current_password in range(password_count):
-            password = ""
-            for current_character in range(password_length):
-                random_number = self.random_number_generator.randint(
-                    0,
-                    len(character_set) - 1
-                )
-                password += character_set[random_number]
-
-            self.PrintMessage(password+"\n")
 
     def PrintMessage(self, message):
         # Add the text at the end
@@ -135,11 +139,6 @@ class Application(gnome.ui.App):
                 "abcdefghijklmnopqrstuvwxyz+/"
             )
         )
-
-        try:
-            self.random_number_generator = random.SystemRandom()
-        except NotImplementedError:
-            self.random_number_generator = random.Random()
 
         # Setup the application
         gnome.ui.App.__init__(
