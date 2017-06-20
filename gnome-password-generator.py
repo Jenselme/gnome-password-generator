@@ -43,6 +43,12 @@ class CharacterSet:
         self.description = description
         self.characters = characters
 
+    def __len__(self):
+        return len(self.characters)
+
+    def __getitem__(self, index):
+        return self.characters[index]
+
 
 def generate_password(password_length, password_count, character_set):
     random_number_generator = get_random_numbers_generator()
