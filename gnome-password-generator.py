@@ -50,17 +50,25 @@ class CharacterSet:
         return self.characters[index]
 
 
-def generate_password(password_length, password_count, character_set):
+def generate_passwords(password_length, password_count, character_set):
+    passwords = []
+
+    for _ in range(password_count):
+        passwords.append(generate_password(password_length, character_set))
+
+    return passwords
+
+
+def generate_password(password_length, character_set):
     random_number_generator = get_random_numbers_generator()
 
-    for current_password in range(password_count):
-        password = ""
-        for current_character in range(password_length):
-            random_number = random_number_generator.randint(
-                0,
-                len(character_set) - 1
-            )
-            password += character_set[random_number]
+    password = ""
+    for current_character in range(password_length):
+        random_number = random_number_generator.randint(
+            0,
+            len(character_set) - 1
+        )
+        password += character_set[random_number]
 
     return password
 
