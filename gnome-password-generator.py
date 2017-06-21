@@ -28,6 +28,7 @@ import random
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk  # noqa
+from gi.repository import GdkPixbuf  # noqa
 from gi.repository import Gio  # noqa
 
 
@@ -96,7 +97,7 @@ class MainWindow(Gtk.ApplicationWindow):
         )
         self.app = app
         self.set_default_size(750, 500)
-        self.set_icon_from_file(ICON_FILE)
+        self.set_icon(self.app.image)
 
         grid = Gtk.Grid()
         grid.set_row_spacing(20)
@@ -231,6 +232,7 @@ class GnomePassordGenerator(Gtk.Application):
     def __init__(self):
         super().__init__()
 
+        self.image = GdkPixbuf.Pixbuf.new_from_file(ICON_FILE)
         self.character_sets = (
             CharacterSet(
                 "All printable (excluding space)",
