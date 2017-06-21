@@ -21,6 +21,7 @@
 ####
 
 import gi
+import os.path
 import sys
 import random
 
@@ -33,6 +34,7 @@ VERSION = '2.0'
 PYTHON_VERSION = (3, 4)
 
 PIXMAPDIR = '/usr/share/pixmaps'
+ICON_FILE = os.path.join(PIXMAPDIR, 'gnome-password-generator.png')
 
 PW_LEN_MIN = 1
 PW_LEN_MAX = 256
@@ -93,9 +95,7 @@ class MainWindow(Gtk.ApplicationWindow):
         )
         self.app = app
         self.set_default_size(750, 500)
-        self.image = Gtk.Image()
-        self.image.set_from_file(PIXMAPDIR + "/gnome-password-generator.png")
-        self.set_icon(self.image.get_pixbuf())
+        self.set_icon_from_file(ICON_FILE)
 
         grid = Gtk.Grid()
         grid.set_row_spacing(20)
