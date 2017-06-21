@@ -28,6 +28,7 @@ import random
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk  # noqa
+from gi.repository import Gio  # noqa
 
 
 VERSION = '2.0'
@@ -266,6 +267,29 @@ class GnomePassordGenerator(Gtk.Application):
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
+        self.create_gmenu()
+
+    def create_gmenu(self):
+        menu = Gio.Menu()
+        menu.append("About", "app.about")
+        menu.append("Quit", "app.quit")
+        self.set_app_menu(menu)
+
+        # option "about"
+        about_action = Gio.SimpleAction.new("about", None)
+        about_action.connect("activate", self.about_cb)
+        self.add_action(about_action)
+
+        # option "quit"
+        quit_action = Gio.SimpleAction.new("quit", None)
+        quit_action.connect("activate", self.quit_cb)
+        self.add_action(quit_action)
+
+    def about_cb(self, action, parameter):
+        print("No AboutDialog for you. This is only a demonstration.")
+
+    def quit_cb(self, action, parameter):
+        self.quit()
 
 
 # Start the program
