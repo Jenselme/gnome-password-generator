@@ -182,9 +182,9 @@ class MainWindow(Gtk.ApplicationWindow):
         hbox.pack_start(char_set_hbox, False, False, 20)
 
         # Setup the start button
-        self.button = Gtk.Button.new_from_stock(Gtk.STOCK_EXECUTE)
-        self.button.connect("clicked", self.on_execute_clicked)
-        hbox.pack_end(self.button, False, False, 6)
+        self.start_button = Gtk.Button.new_from_stock(Gtk.STOCK_EXECUTE)
+        self.start_button.connect("clicked", self.on_execute_clicked)
+        hbox.pack_end(self.start_button, False, False, 6)
 
         return hbox
 
