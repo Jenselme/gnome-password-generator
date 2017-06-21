@@ -35,6 +35,17 @@ from gi.repository import Gio  # noqa
 VERSION = '2.0'
 PYTHON_VERSION = (3, 4)
 
+NAME = 'Gnome Password Generator'
+COPYRIGHT = '''Copyright (c) 2004-2008 Chris Ladd
+Copyright (c) 2017 Julien Enselme
+'''
+AUTHORS = [
+    'Chris Ladd',
+    'Steve Tyler',
+    'Julien Enselme <jujens@jujens.eu>',
+]
+WEBSITE = 'https://github.com/Jenselme/gnome-password-generator'
+
 PIXMAPDIR = '/usr/share/pixmaps'
 ICON_FILE = os.path.join(PIXMAPDIR, 'gnome-password-generator.png')
 
@@ -264,8 +275,8 @@ class GnomePassordGenerator(Gtk.Application):
         )
 
     def do_activate(self):
-        main_win = MainWindow(self)
-        main_win.show_all()
+        self.main_win = MainWindow(self)
+        self.main_win.show_all()
 
     def do_startup(self):
         Gtk.Application.do_startup(self)
@@ -288,7 +299,19 @@ class GnomePassordGenerator(Gtk.Application):
         self.add_action(quit_action)
 
     def about_cb(self, action, parameter):
-        print("No AboutDialog for you. This is only a demonstration.")
+        about_dialog = Gtk.AboutDialog()
+        about_dialog.set_program_name(NAME)
+        about_dialog.set_copyright(COPYRIGHT)
+        about_dialog.set_authors(AUTHORS)
+        about_dialog.set_website(WEBSITE)
+        about_dialog.set_logo(self.image)
+
+        about_dialog.set_transient_for(self.main_win)
+        about_dialog.connect('response', self.on_close)
+        about_dialog.show()
+
+    def on_close(self, action, parameter):
+        action.destroy()
 
     def quit_cb(self, action, parameter):
         self.quit()
