@@ -11,8 +11,8 @@ INSTALL=install
 
 all:
 	cp gnome-password-generator.py gnome-password-generator
-	perl -pi -e 's|/usr/share/pixmaps|$(PIXMAPDIR)|' gnome-password-generator
-    
+	sed -Ei 's|/usr/share/pixmaps|$(PIXMAPDIR)|' gnome-password-generator
+
 install:
 	$(INSTALL) -d -m0755 $(DESTDIR)$(bindir)
 	$(INSTALL) -m0755 gnome-password-generator $(DESTDIR)$(bindir)
@@ -23,3 +23,6 @@ install:
 
 clean:
 	rm gnome-password-generator
+
+lint:
+	flake8 *.py

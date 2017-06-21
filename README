@@ -3,6 +3,5 @@ Gnome Password Generator is a GUI based secure password generator.
 Requirements
 ============
 
-- Python 2.4 or greater
-- PyGTK version 2.4 or greater
-- Gnome-Python for Gnome 2
+- Python 3.4 or greater
+- Python bindings for gobject version 3.0 or greater

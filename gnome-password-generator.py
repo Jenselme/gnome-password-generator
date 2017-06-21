@@ -1,6 +1,7 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 ####
+# Copyright (c) 2017 Julien Enslme
 # Copyright (c) 2004-2008 Chris Ladd
 # Copyright (c) 2007 Steve Tyler
 #
@@ -15,230 +16,327 @@
 # GNU Library General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 ####
 
+import gi
+import os.path
 import sys
 import random
-import string
-import time
-import gtk
-import pango
-import gnome
-import gnome.ui
 
-VERSION = "1.6"
-PYTHON_VERSION = (2, 4)
-PYGTK_VERSION = (2, 4)
+gi.require_version('Gtk', '3.0')
 
-PIXMAPDIR = "/usr/share/pixmaps"
+from gi.repository import Gtk  # noqa
+from gi.repository import Gdk  # noqa
+from gi.repository import GdkPixbuf  # noqa
+from gi.repository import Gio  # noqa
+
+
+VERSION = '2.0'
+PYTHON_VERSION = (3, 4)
+
+NAME = 'Gnome Password Generator'
+COPYRIGHT = '''Copyright (c) 2004-2008 Chris Ladd
+Copyright (c) 2017 Julien Enselme
+'''
+AUTHORS = [
+    'Chris Ladd',
+    'Steve Tyler',
+    'Julien Enselme <jujens@jujens.eu>',
+]
+WEBSITE = 'https://github.com/Jenselme/gnome-password-generator'
+
+PIXMAPDIR = '/usr/share/pixmaps'
+ICON_FILE = os.path.join(PIXMAPDIR, 'gnome-password-generator.png')
 
 PW_LEN_MIN = 1
 PW_LEN_MAX = 256
 PW_LEN_DEFAULT = 12
+PW_STEP_INCREMENT = 1
+PW_PAGE_INCREMENT = 1
+PW_PAGE_SIZE = 0
+
 
 class CharacterSet:
     def __init__(self, description, characters):
         self.description = description
         self.characters = characters
 
-class Application(gnome.ui.App):
-    def DeleteCallback(self, widget, event, data = None):
-        return False
+    def __len__(self):
+        return len(self.characters)
 
-    def DestroyCallback(self, widget, data = None):
-        gtk.main_quit()
+    def __getitem__(self, index):
+        return self.characters[index]
 
-    def ClickedCallback(self, widget, data = None):
-        # Clear the textview
-        buffer = self.textview.get_buffer()
-        buffer.delete(buffer.get_start_iter(), buffer.get_end_iter())
-        
-        # Generate the passwords
-        self.GeneratePasswords(self.length_spin_button.get_value_as_int(), self.count_spin_button.get_value_as_int(), self.char_set_combo_box.get_active())
 
-    def AboutCallback(self, widget, data = None):
-        gnome.ui.About("Gnome Password Generator", VERSION, "Copyright 2008 Chris Ladd", "Secure Password Generator", ["Chris Ladd <caladd@particlestorm.net>"], None, None, self.image.get_pixbuf()).show()
-    
-    def GeneratePasswords(self, password_length, password_count, character_set_ndx):
-        character_set = self.character_sets[character_set_ndx].characters
-        
-        for current_password in range(password_count):
-            password = ""
-            for current_character in range(password_length):
-                random_number = self.random_number_generator.randint(0, len(character_set)-1)
-                password += character_set[random_number]
-            
-            self.PrintMessage(password+"\n")
-        
-    def PrintMessage(self, message):
-        # Add the text at the end
-        buffer = self.textview.get_buffer()
-        iter = buffer.get_end_iter()
-        buffer.insert(iter, message)
-        self.textview.scroll_to_iter(iter, 0.0, False, 0.0, 0.0)
-        
-        # Do any needed events
-        while gtk.events_pending():
-            gtk.main_iteration_do(False)
-      
-    def __init__(self):
-        self.character_sets = (
-            CharacterSet("All printable (excluding space)", "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"),
-            CharacterSet("Alpha-numeric (a-z, A-Z, 0-9)", "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"),
-            CharacterSet("Alpha lower-case (a-z)", "abcdefghijklmnopqrstuvwxyz"),
-            CharacterSet("Hexadecimal (0-9, A-F)", "0123456789ABCDEF"),
-            CharacterSet("Decimal (0-9)", "0123456789"),
-            CharacterSet("Base 64 (a-z, A-Z, 0-9, '+', '/')", "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/")
+def generate_passwords(password_length, password_count, character_set):
+    passwords = []
+
+    for _ in range(password_count):
+        passwords.append(generate_password(password_length, character_set))
+
+    return passwords
+
+
+def generate_password(password_length, character_set):
+    random_number_generator = get_random_numbers_generator()
+
+    password = ""
+    for current_character in range(password_length):
+        random_number = random_number_generator.randint(
+            0,
+            len(character_set) - 1
         )
+        password += character_set[random_number]
 
-        try:
-            self.random_number_generator = random.SystemRandom()
-        except NotImplementedError:
-            self.random_number_generator = random.Random()
-        
-        # Setup the application
-        gnome.ui.App.__init__(self, "Gnome Password Generator", "Gnome Password Generator")
-        
-        # Setup the main window
-        self.image = gtk.Image()
-        self.image.set_from_file(PIXMAPDIR + "/gnome-password-generator.png")
+    return password
 
-        self.set_icon(self.image.get_pixbuf())
-        
-        self.connect("delete_event", self.DeleteCallback)
-        self.connect("destroy", self.DestroyCallback)
 
-        vbox = gtk.VBox(False, 0)
+def get_random_numbers_generator():
+    try:
+        return random.SystemRandom()
+    except NotImplementedError:
+        return random.Random()
 
-        # Setup the main menubar
-        ui = '''<ui>
-          <menubar name="MenuBar">
-            <menu action="File">
-              <menuitem action="Quit"/>
-            </menu>
-            <menu action="Help">
-              <menuitem action="About"/>
-            </menu>
-          </menubar>
-        </ui>'''
-        
-        action_group = gtk.ActionGroup("Gnome Password Generator")
-        action_group.add_actions([
-            ("File", None, "_File"),
-            ("Quit", gtk.STOCK_QUIT, None, None, None, self.DestroyCallback),
-            ("Help", None, "_Help"),
-            ("About", gtk.STOCK_ABOUT, None, None, None, self.AboutCallback)
-        ])
-    
-        uimanager = gtk.UIManager()
-        uimanager.insert_action_group(action_group, 0)
-        uimanager.add_ui_from_string(ui)
-        
-        accel_group = uimanager.get_accel_group()
-        self.add_accel_group(accel_group)
-    
-        self.set_menus(uimanager.get_widget('/MenuBar'))
-    
-        # Setup the layout controls
-        inner_vbox = gtk.VBox(False, 0)
-        
-        hbox_top = gtk.HBox(False, 0)
-        top_vbox = gtk.VBox(False, 0)
-        top_frame = gtk.Frame()
-        
-        top_vbox.pack_start(hbox_top, True, True, 6)
-        top_frame.add(top_vbox)
-        hbox = gtk.HBox(False, 0)
-        hbox.pack_start(top_frame, True, True, 4)
-        inner_vbox.pack_start(hbox, False, False, 6)
-        
-        hbox_bottom = gtk.HBox(False, 0)
-        bottom_vbox = gtk.VBox(False, 0)
-        
-        bottom_vbox.pack_start(hbox_bottom, True, True, 6)
-        inner_vbox.pack_start(bottom_vbox, True, True, 0)
-        
-        vbox.pack_start(inner_vbox, True, True, 0)
-        
-        # Setup the length label
-        length_hbox = gtk.HBox(False, 0)
-        self.length_label = gtk.Label("Length:")
+
+class MainWindow(Gtk.ApplicationWindow):
+    def __init__(self, app):
+        Gtk.Window.__init__(
+            self,
+            title='Gnome Password Generator',
+            application=app
+        )
+        self.app = app
+        self.set_default_size(750, 500)
+        self.set_icon(self.app.image)
+
+        self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+
+        grid = Gtk.Grid()
+        grid.set_row_spacing(20)
+        grid.props.margin_top = 5
+        grid.props.margin_bottom = 5
+
+        option_hbox = self.create_option_hbox()
+        option_hbox.set_hexpand(True)
+        option_hbox.show()
+        grid.attach(option_hbox, 0, 0, 1, 1)
+
+        result_view = self.create_result_view()
+        result_view.set_hexpand(True)
+        result_view.show()
+        grid.attach(result_view, 0, 1, 1, 1)
+
+        self.add(grid)
+
+    def create_option_hbox(self):
+        hbox = Gtk.HBox()
+        hbox.get_style_context().add_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR)
+
+        # Setup label
+        length_hbox = Gtk.HBox(False, 0)
+        self.length_label = Gtk.Label("Length:")
         length_hbox.pack_start(self.length_label, False, False, 0)
-        
+
         # Setup the length spin button
-        adjustment = gtk.Adjustment(PW_LEN_DEFAULT, PW_LEN_MIN, PW_LEN_MAX, 1, 1, 0)
-        self.length_spin_button = gtk.SpinButton(adjustment, 0, 0)
+        adjustment = Gtk.Adjustment(
+            PW_LEN_DEFAULT,
+            PW_LEN_MIN,
+            PW_LEN_MAX,
+            PW_STEP_INCREMENT,
+            PW_PAGE_INCREMENT,
+            PW_PAGE_SIZE
+        )
+        self.length_spin_button = Gtk.SpinButton()
+        self.length_spin_button.set_adjustment(adjustment)
+        self.length_spin_button.set_value(PW_LEN_DEFAULT)
         length_hbox.pack_start(self.length_spin_button, False, False, 6)
-        hbox_top.pack_start(length_hbox, False, False, 6)
-        
+        hbox.pack_start(length_hbox, False, False, 6)
+
         # Setup the count label
-        count_hbox = gtk.HBox(False, 0)
-        self.count_label = gtk.Label("Count:")
+        count_hbox = Gtk.HBox(False, 0)
+        self.count_label = Gtk.Label("Count:")
         count_hbox.pack_start(self.count_label, False, False, 0)
-        
+
         # Setup the count spin button
-        adjustment = gtk.Adjustment(1, 1, 100, 1, 1, 0)
-        self.count_spin_button = gtk.SpinButton(adjustment, 0, 0)
+        adjustment = Gtk.Adjustment(1, 1, 100, 1, 1, 0)
+        self.count_spin_button = Gtk.SpinButton()
+        self.count_spin_button.set_adjustment(adjustment)
+        self.count_spin_button.set_value(1)
         count_hbox.pack_start(self.count_spin_button, False, False, 6)
-        hbox_top.pack_start(count_hbox, False, False, 20)
+        hbox.pack_start(count_hbox, False, False, 20)
 
         # Setup the character set label
-        char_set_hbox = gtk.HBox(False, 0)
-        self.char_set_label = gtk.Label("Character Set:")
+        char_set_hbox = Gtk.HBox(False, 0)
+        self.char_set_label = Gtk.Label("Character Set:")
         char_set_hbox.pack_start(self.char_set_label, False, False, 0)
 
         # Setup the character set combo box
-        self.char_set_combo_box = gtk.combo_box_new_text()
-        for character_set in self.character_sets:
-            self.char_set_combo_box.append_text(character_set.description)
+        char_set_list = Gtk.ListStore(str)
+        for character_set in self.app.character_sets:
+            char_set_list.append([character_set.description])
+        self.char_set_combo_box = Gtk.ComboBox(model=char_set_list)
+        cell = Gtk.CellRendererText()
+        self.char_set_combo_box.pack_start(cell, False)
+        self.char_set_combo_box.add_attribute(cell, 'text', 0)
         self.char_set_combo_box.set_active(1)
         char_set_hbox.pack_start(self.char_set_combo_box, False, False, 6)
-        hbox_top.pack_start(char_set_hbox, False, False, 20)
+        hbox.pack_start(char_set_hbox, False, False, 20)
 
         # Setup the start button
-        self.button = gtk.Button("", gtk.STOCK_EXECUTE)
-        self.button.connect("clicked", self.ClickedCallback) 
-        hbox_top.pack_end(self.button, False, False, 6)
-        
+        self.start_button = Gtk.Button.new_from_stock(Gtk.STOCK_EXECUTE)
+        self.start_button.connect("clicked", self.on_execute_clicked)
+        hbox.pack_start(self.start_button, False, False, 6)
+
+        # Setup the copy button
+        self.copy_button = Gtk.Button.new_from_stock(Gtk.STOCK_COPY)
+        self.copy_button.connect('clicked', self.on_copy_clicked)
+        self.copy_button.set_sensitive(False)
+        hbox.pack_start(self.copy_button, False, False, 6)
+
+        return hbox
+
+    def create_result_view(self):
+        hbox = Gtk.HBox()
+        hbox.get_style_context().add_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR)
+
         # Setup the status window
-        self.scrolledwindow = gtk.ScrolledWindow()
-        self.scrolledwindow.set_policy(gtk.POLICY_ALWAYS, gtk.POLICY_ALWAYS)
-        self.scrolledwindow.set_shadow_type(gtk.SHADOW_IN)
-        self.textview = gtk.TextView()
-        self.textview.set_editable(False)
-        self.textview.modify_font(pango.FontDescription("Monospace 12"))
-        self.textview.set_left_margin(10)
-        self.scrolledwindow.add(self.textview)
-        hbox_bottom.pack_start(self.scrolledwindow, True, True, 4)
+        self.scrolled_window = Gtk.ScrolledWindow()
+        self.scrolled_window.set_policy(
+            Gtk.PolicyType.AUTOMATIC,
+            Gtk.PolicyType.AUTOMATIC
+        )
+        self.scrolled_window.set_vexpand(True)
 
-        # Show everything
-        self.set_contents(vbox)
-        self.set_default_size(750, 500)
-        self.set_focus(self.button)
-        self.show_all()
-    
-def Main():
-    program = gnome.init("gnome-password-generator", VERSION)
+        self.passwords_text_buffer = Gtk.TextBuffer()
+        self.text_view = Gtk.TextView(buffer=self.passwords_text_buffer)
+        self.text_view.set_editable(False)
+        self.text_view.set_wrap_mode(Gtk.WrapMode.NONE)
+        self.text_view.set_left_margin(10)
+        self.text_view.set_top_margin(5)
+        self.text_view.set_right_margin(10)
+        self.text_view.set_bottom_margin(5)
 
-    # Check to make sure the right versions of Python and PyGTK are installed
-    message = None
-    if sys.version_info < PYTHON_VERSION:
-        message = ("You appear to be running Python version %i.%i.%i, but this program requires version %i.%i or greater.\n\n" +
-                    "Please upgrade to a newer version.") % (sys.version_info[0:3] + PYTHON_VERSION)
-    elif gtk.pygtk_version < PYGTK_VERSION:
-        message = ("You appear to be running PyGTK version %i.%i.%i, but this program requires version %i.%i or greater.\n\n" +
-                    "Please upgrade to a newer version.") % (gtk.pygtk_version + PYGTK_VERSION)
+        self.scrolled_window.add(self.text_view)
+        hbox.pack_start(self.scrolled_window, True, True, 4)
 
-    if message is not None:
-        dialog = gtk.MessageDialog(None, 0, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, message)
-        dialog.run()
-    else:
-        application = Application()
-    
-        gtk.main()
+        return hbox
+
+    def on_char_set_changed(self, char_set_combo_box):
+        index = char_set_combo_box.get_active()
+        self.app.selected_character_set = self.app.character_sets[index]
+
+    def on_execute_clicked(self, execute_button):
+        passwords = generate_passwords(
+            self.passwd_length,
+            self.passwd_count,
+            self.selected_character_set
+        )
+        self.passwords_text_buffer.set_text('\n'.join(passwords))
+        self.copy_button.set_sensitive(True)
+
+    def on_copy_clicked(self, copy_button):
+        passwords = self.passwords_text_buffer.get_text(
+            self.passwords_text_buffer.get_start_iter(),
+            self.passwords_text_buffer.get_end_iter(),
+            False
+        )
+        self.clipboard.set_text(passwords, -1)
+
+    @property
+    def selected_character_set(self):
+        return self.app.character_sets[self.char_set_combo_box.get_active()]
+
+    @property
+    def passwd_length(self):
+        return int(self.length_spin_button.get_value())
+
+    @property
+    def passwd_count(self):
+        return int(self.count_spin_button.get_value())
+
+
+class GnomePassordGenerator(Gtk.Application):
+    def __init__(self):
+        super().__init__()
+
+        self.image = GdkPixbuf.Pixbuf.new_from_file(ICON_FILE)
+        self.character_sets = (
+            CharacterSet(
+                "All printable (excluding space)",
+                "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+            ),
+            CharacterSet(
+                "Alpha-numeric (a-z, A-Z, 0-9)",
+                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz"
+            ),
+            CharacterSet(
+                "Alpha lower-case (a-z)",
+                "abcdefghijklmnopqrstuvwxyz"
+            ),
+            CharacterSet(
+                "Hexadecimal (0-9, A-F)",
+                "0123456789ABCDEF"
+            ),
+            CharacterSet(
+                "Decimal (0-9)",
+                "0123456789"
+            ),
+            CharacterSet(
+                "Base 64 (a-z, A-Z, 0-9, '+', '/')",
+                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz+/"
+            )
+        )
+
+    def do_activate(self):
+        self.main_win = MainWindow(self)
+        self.main_win.show_all()
+
+    def do_startup(self):
+        Gtk.Application.do_startup(self)
+        self.create_gmenu()
+
+    def create_gmenu(self):
+        menu = Gio.Menu()
+        menu.append("About", "app.about")
+        menu.append("Quit", "app.quit")
+        self.set_app_menu(menu)
+
+        # option "about"
+        about_action = Gio.SimpleAction.new("about", None)
+        about_action.connect("activate", self.about_cb)
+        self.add_action(about_action)
+
+        # option "quit"
+        quit_action = Gio.SimpleAction.new("quit", None)
+        quit_action.connect("activate", self.quit_cb)
+        self.add_action(quit_action)
+
+    def about_cb(self, action, parameter):
+        about_dialog = Gtk.AboutDialog()
+        about_dialog.set_program_name(NAME)
+        about_dialog.set_copyright(COPYRIGHT)
+        about_dialog.set_authors(AUTHORS)
+        about_dialog.set_website(WEBSITE)
+        about_dialog.set_logo(self.image)
+
+        about_dialog.set_transient_for(self.main_win)
+        about_dialog.connect('response', self.on_close)
+        about_dialog.show()
+
+    def on_close(self, action, parameter):
+        action.destroy()
+
+    def quit_cb(self, action, parameter):
+        self.quit()
+
 
 # Start the program
 if __name__ == "__main__":
-    Main()
+    app = GnomePassordGenerator()
+    exit_status = app.run(sys.argv)
+    sys.exit(exit_status)
