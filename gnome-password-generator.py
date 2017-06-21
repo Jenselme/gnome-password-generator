@@ -28,6 +28,7 @@ import random
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk  # noqa
+from gi.repository import Gdk  # noqa
 from gi.repository import GdkPixbuf  # noqa
 from gi.repository import Gio  # noqa
 
@@ -110,6 +111,8 @@ class MainWindow(Gtk.ApplicationWindow):
         self.set_default_size(750, 500)
         self.set_icon(self.app.image)
 
+        self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+
         grid = Gtk.Grid()
         grid.set_row_spacing(20)
         grid.props.margin_top = 5
@@ -184,7 +187,13 @@ class MainWindow(Gtk.ApplicationWindow):
         # Setup the start button
         self.start_button = Gtk.Button.new_from_stock(Gtk.STOCK_EXECUTE)
         self.start_button.connect("clicked", self.on_execute_clicked)
-        hbox.pack_end(self.start_button, False, False, 6)
+        hbox.pack_start(self.start_button, False, False, 6)
+
+        # Setup the copy button
+        self.copy_button = Gtk.Button.new_from_stock(Gtk.STOCK_COPY)
+        self.copy_button.connect('clicked', self.on_copy_clicked)
+        self.copy_button.set_sensitive(False)
+        hbox.pack_start(self.copy_button, False, False, 6)
 
         return hbox
 
@@ -225,6 +234,15 @@ class MainWindow(Gtk.ApplicationWindow):
             self.selected_character_set
         )
         self.passwords_text_buffer.set_text('\n'.join(passwords))
+        self.copy_button.set_sensitive(True)
+
+    def on_copy_clicked(self, copy_button):
+        passwords = self.passwords_text_buffer.get_text(
+            self.passwords_text_buffer.get_start_iter(),
+            self.passwords_text_buffer.get_end_iter(),
+            False
+        )
+        self.clipboard.set_text(passwords, -1)
 
     @property
     def selected_character_set(self):
