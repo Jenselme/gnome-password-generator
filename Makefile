@@ -32,18 +32,18 @@ build: $(APPNAME)
 
 
 install: build
-	$(INSTALL) -d -m0755 $(DESTDIR)$(bindir)
-	$(INSTALL) -m0755 $(APPNAME) $(DESTDIR)$(bindir)
-	$(INSTALL) -d -m0755 $(DESTDIR)$(APPDATADIR)
-	$(INSTALL) -m0644 data/$(APPNAME).appdata.xml $(DESTDIR)$(APPDATADIR)
-	$(INSTALL) -d -m0755 $(DESTDIR)$(DESKTOPDIR)
-	$(INSTALL) -m0644 data/$(APPNAME).desktop $(DESTDIR)$(DESKTOPDIR)
-	$(INSTALL) -d -m0755 $(DESTDIR)$(ICONDIR)/96x96/apps
-	$(INSTALL) -m0644 data/$(APPNAME).png $(DESTDIR)$(ICONDIR)/96x96/apps
-	$(INSTALL) -d -m0755 $(DESTDIR)$(ICONDIR)/scalable/apps
-	$(INSTALL) -m0644 data/$(APPNAME).svg $(DESTDIR)$(ICONDIR)/scalable/apps
-	$(INSTALL) -d -m0755 $(DESTDIR)$(PIXMAPDIR)
-	$(INSTALL) -m0644 data/$(APPNAME).png $(DESTDIR)$(PIXMAPDIR)
+	$(INSTALL) -d -pm0755 $(DESTDIR)$(bindir)
+	$(INSTALL) -pm0755 $(APPNAME) $(DESTDIR)$(bindir)
+	$(INSTALL) -d -pm0755 $(DESTDIR)$(APPDATADIR)
+	$(INSTALL) -pm0644 data/$(APPNAME).appdata.xml $(DESTDIR)$(APPDATADIR)
+	$(INSTALL) -d -pm0755 $(DESTDIR)$(DESKTOPDIR)
+	$(INSTALL) -pm0644 data/$(APPNAME).desktop $(DESTDIR)$(DESKTOPDIR)
+	$(INSTALL) -d -pm0755 $(DESTDIR)$(ICONDIR)/96x96/apps
+	$(INSTALL) -pm0644 data/$(APPNAME).png $(DESTDIR)$(ICONDIR)/96x96/apps
+	$(INSTALL) -d -pm0755 $(DESTDIR)$(ICONDIR)/scalable/apps
+	$(INSTALL) -pm0644 data/$(APPNAME).svg $(DESTDIR)$(ICONDIR)/scalable/apps
+	$(INSTALL) -d -pm0755 $(DESTDIR)$(PIXMAPDIR)
+	$(INSTALL) -pm0644 data/$(APPNAME).png $(DESTDIR)$(PIXMAPDIR)
 
 
 clean:
