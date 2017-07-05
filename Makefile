@@ -2,7 +2,7 @@ prefix  ?= /usr
 bindir  ?= $(prefix)/bin
 datadir ?= $(prefix)/share
 
-APPDATADIR ?= $(datadir)/icons/hicolor
+APPDATADIR ?= $(datadir)/appdata
 DESKTOPDIR ?= $(datadir)/applications
 ICONDIR    ?= $(datadir)/icons/hicolor
 PIXMAPDIR  ?= $(datadir)/pixmaps
