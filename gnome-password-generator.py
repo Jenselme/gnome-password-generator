@@ -31,6 +31,7 @@ from gi.repository import Gtk  # noqa
 from gi.repository import Gdk  # noqa
 from gi.repository import GdkPixbuf  # noqa
 from gi.repository import Gio  # noqa
+from gi.repository import GLib  # noqa
 
 
 VERSION = '2.0'
@@ -129,6 +130,7 @@ class MainWindow(Gtk.ApplicationWindow):
         grid.attach(result_view, 0, 1, 1, 1)
 
         self.add(grid)
+        self.load_config()
 
     def create_option_hbox(self):
         hbox = Gtk.HBox()
@@ -184,6 +186,11 @@ class MainWindow(Gtk.ApplicationWindow):
         char_set_hbox.pack_start(self.char_set_combo_box, False, False, 6)
         hbox.pack_start(char_set_hbox, False, False, 20)
 
+        # Setup the save config button
+        self.save_config_button = Gtk.Button.new_from_stock(Gtk.STOCK_SAVE)
+        self.save_config_button.connect('clicked', self.on_save_config_clicked)
+        hbox.pack_start(self.save_config_button, False, False, 6)
+
         # Setup the start button
         self.start_button = Gtk.Button.new_from_stock(Gtk.STOCK_EXECUTE)
         self.start_button.connect("clicked", self.on_execute_clicked)
@@ -223,10 +230,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         return hbox
 
-    def on_char_set_changed(self, char_set_combo_box):
-        index = char_set_combo_box.get_active()
-        self.app.selected_character_set = self.app.character_sets[index]
-
     def on_execute_clicked(self, execute_button):
         passwords = generate_passwords(
             self.passwd_length,
@@ -244,20 +247,61 @@ class MainWindow(Gtk.ApplicationWindow):
         )
         self.clipboard.set_text(passwords, -1)
 
+    def on_save_config_clicked(self, save_config_button):
+        self.save_config()
+
+    def save_config(self):
+        key_file = GLib.KeyFile.new()
+        key_file.set_value('generate', 'length', str(self.passwd_length))
+        key_file.set_value('generate', 'count', str(self.passwd_count))
+        key_file.set_value(
+            'generate',
+            'character_set',
+            str(self.char_set_combo_box.get_active())
+        )
+        key_file.save_to_file(self.app.CONFIG_FILE)
+
+    def load_config(self):
+        key_file = GLib.KeyFile.new()
+        key_file.load_from_file(self.app.CONFIG_FILE, GLib.KeyFileFlags.NONE)
+        self.passwd_length = key_file.get_value('generate', 'length')
+        self.passwd_count = key_file.get_value('generate', 'count')
+        self.selected_character_set = key_file.get_value(
+            'generate',
+            'character_set'
+        )
+
     @property
     def selected_character_set(self):
         return self.app.character_sets[self.char_set_combo_box.get_active()]
+
+    @selected_character_set.setter
+    def selected_character_set(self, value):
+        self.char_set_combo_box.set_active(int(value))
 
     @property
     def passwd_length(self):
         return int(self.length_spin_button.get_value())
 
+    @passwd_length.setter
+    def passwd_length(self, value):
+        self.length_spin_button.set_value(int(value))
+
     @property
     def passwd_count(self):
         return int(self.count_spin_button.get_value())
 
+    @passwd_count.setter
+    def passwd_count(self, value):
+        self.count_spin_button.set_value(int(value))
+
 
 class GnomePassordGenerator(Gtk.Application):
+    CONFIG_FILE = os.path.join(
+        GLib.get_user_config_dir(),
+        NAME.lower().replace(' ', '-') + '.conf'
+    )
+
     def __init__(self):
         super().__init__()
 
