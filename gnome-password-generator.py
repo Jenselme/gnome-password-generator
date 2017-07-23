@@ -104,7 +104,7 @@ class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, app):
         Gtk.Window.__init__(
             self,
-            title='Gnome Password Generator',
+            title=NAME,
             application=app
         )
         self.app = app
