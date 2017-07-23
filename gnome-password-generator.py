@@ -262,14 +262,15 @@ class MainWindow(Gtk.ApplicationWindow):
         key_file.save_to_file(self.app.CONFIG_FILE)
 
     def load_config(self):
-        key_file = GLib.KeyFile.new()
-        key_file.load_from_file(self.app.CONFIG_FILE, GLib.KeyFileFlags.NONE)
-        self.passwd_length = key_file.get_value('generate', 'length')
-        self.passwd_count = key_file.get_value('generate', 'count')
-        self.selected_character_set = key_file.get_value(
-            'generate',
-            'character_set'
-        )
+        if os.path.exists(self.app.CONFIG_FILE):
+            key_file = GLib.KeyFile.new()
+            key_file.load_from_file(self.app.CONFIG_FILE, GLib.KeyFileFlags.NONE)
+            self.passwd_length = key_file.get_value('generate', 'length')
+            self.passwd_count = key_file.get_value('generate', 'count')
+            self.selected_character_set = key_file.get_value(
+                'generate',
+                'character_set'
+            )
 
     @property
     def selected_character_set(self):
