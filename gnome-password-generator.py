@@ -189,6 +189,7 @@ class MainWindow(Gtk.ApplicationWindow):
         # Setup the save config button
         self.save_config_button = Gtk.Button.new_from_stock(Gtk.STOCK_SAVE)
         self.save_config_button.connect('clicked', self.on_save_config_clicked)
+        self.save_config_button.set_tooltip_text('Save options for future use')
         hbox.pack_start(self.save_config_button, False, False, 6)
 
         # Setup the start button
