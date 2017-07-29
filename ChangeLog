@@ -1,3 +1,7 @@
+2017-07-29 Julien Enselme <jujens@jujens.eu> - 2.1.0
+
+- Can save options used to generate a password
+
 2017-07-05 Julien Enselme <jujens@jujens.eu> - v2.0.3
 
 - Remove NEWS file
