@@ -137,18 +137,18 @@ class MainWindow(Gtk.ApplicationWindow):
         hbox.get_style_context().add_class(Gtk.STYLE_CLASS_PRIMARY_TOOLBAR)
 
         # Setup label
-        length_hbox = Gtk.HBox(False, 0)
-        self.length_label = Gtk.Label("Length:")
+        length_hbox = Gtk.HBox(homogeneous=False, spacing=0)
+        self.length_label = Gtk.Label.new_with_mnemonic("Length:")
         length_hbox.pack_start(self.length_label, False, False, 0)
 
         # Setup the length spin button
         adjustment = Gtk.Adjustment(
-            PW_LEN_DEFAULT,
-            PW_LEN_MIN,
-            PW_LEN_MAX,
-            PW_STEP_INCREMENT,
-            PW_PAGE_INCREMENT,
-            PW_PAGE_SIZE
+            value=PW_LEN_DEFAULT,
+            lower=PW_LEN_MIN,
+            upper=PW_LEN_MAX,
+            step_increment=PW_STEP_INCREMENT,
+            page_increment=PW_PAGE_INCREMENT,
+            page_size=PW_PAGE_SIZE
         )
         self.length_spin_button = Gtk.SpinButton()
         self.length_spin_button.set_adjustment(adjustment)
@@ -157,12 +157,12 @@ class MainWindow(Gtk.ApplicationWindow):
         hbox.pack_start(length_hbox, False, False, 6)
 
         # Setup the count label
-        count_hbox = Gtk.HBox(False, 0)
-        self.count_label = Gtk.Label("Count:")
+        count_hbox = Gtk.HBox(homogeneous=False, spacing=0)
+        self.count_label = Gtk.Label.new_with_mnemonic("Count:")
         count_hbox.pack_start(self.count_label, False, False, 0)
 
         # Setup the count spin button
-        adjustment = Gtk.Adjustment(1, 1, 100, 1, 1, 0)
+        adjustment = Gtk.Adjustment(value=1, lower=1, upper=100, step_increment=1, page_increment=1, page_size=0)
         self.count_spin_button = Gtk.SpinButton()
         self.count_spin_button.set_adjustment(adjustment)
         self.count_spin_button.set_value(1)
@@ -170,8 +170,8 @@ class MainWindow(Gtk.ApplicationWindow):
         hbox.pack_start(count_hbox, False, False, 20)
 
         # Setup the character set label
-        char_set_hbox = Gtk.HBox(False, 0)
-        self.char_set_label = Gtk.Label("Character Set:")
+        char_set_hbox = Gtk.HBox(homogeneous=False, spacing=0)
+        self.char_set_label = Gtk.Label.new_with_mnemonic("Character Set:")
         char_set_hbox.pack_start(self.char_set_label, False, False, 0)
 
         # Setup the character set combo box
@@ -187,18 +187,18 @@ class MainWindow(Gtk.ApplicationWindow):
         hbox.pack_start(char_set_hbox, False, False, 20)
 
         # Setup the save config button
-        self.save_config_button = Gtk.Button.new_from_stock(Gtk.STOCK_SAVE)
+        self.save_config_button = Gtk.Button.new_with_label("Save")
         self.save_config_button.connect('clicked', self.on_save_config_clicked)
         self.save_config_button.set_tooltip_text('Save options for future use')
         hbox.pack_start(self.save_config_button, False, False, 6)
 
         # Setup the start button
-        self.start_button = Gtk.Button.new_from_stock(Gtk.STOCK_EXECUTE)
+        self.start_button = Gtk.Button.new_with_label("Execute")
         self.start_button.connect("clicked", self.on_execute_clicked)
         hbox.pack_start(self.start_button, False, False, 6)
 
         # Setup the copy button
-        self.copy_button = Gtk.Button.new_from_stock(Gtk.STOCK_COPY)
+        self.copy_button = Gtk.Button.new_with_label("Copy")
         self.copy_button.connect('clicked', self.on_copy_clicked)
         self.copy_button.set_sensitive(False)
         hbox.pack_start(self.copy_button, False, False, 6)
@@ -311,12 +311,15 @@ class GnomePassordGenerator(Gtk.Application):
         self.character_sets = (
             CharacterSet(
                 "All printable (excluding space)",
-                "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                "[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+                "0123456789"
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz"
+                r"!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"
             ),
             CharacterSet(
                 "Alpha-numeric (a-z, A-Z, 0-9)",
-                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "0123456789"
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 "abcdefghijklmnopqrstuvwxyz"
             ),
             CharacterSet(
@@ -332,9 +335,18 @@ class GnomePassordGenerator(Gtk.Application):
                 "0123456789"
             ),
             CharacterSet(
-                "Base 64 (a-z, A-Z, 0-9, '+', '/')",
-                "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                "abcdefghijklmnopqrstuvwxyz+/"
+                "Base 64 (a-z, A-Z, 0-9, +/)",
+                "0123456789"
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz"
+                r"+/"
+            ),
+            CharacterSet(
+                "Smart Password (a-z, A-Z, 0-9, !@.-_*)",
+                "0123456789"
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "abcdefghijklmnopqrstuvwxyz"
+                r"!@.-_*"
             )
         )
 
