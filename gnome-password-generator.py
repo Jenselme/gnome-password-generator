@@ -35,7 +35,7 @@ from gi.repository import Gio  # noqa
 from gi.repository import GLib  # noqa
 
 
-VERSION = '2.1.0'
+VERSION = '2.2.1'
 PYTHON_VERSION = (3, 4)
 
 NAME = 'Gnome Password Generator'
@@ -385,6 +385,7 @@ class GnomePassordGenerator(Gtk.Application):
         about_dialog.set_copyright(COPYRIGHT)
         about_dialog.set_authors(AUTHORS)
         about_dialog.set_website(WEBSITE)
+        about_dialog.set_version(VERSION)
         if self.image is not None:
             about_dialog.set_logo(self.image)
 
