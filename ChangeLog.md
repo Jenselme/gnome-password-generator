@@ -1,5 +1,8 @@
 # Changelog
 
+## 2025-03-06 Julien Enselme <jujens@jujens.eu> - 2.2.2
+- Correct loading of icon
+
 ## 2025-03-06 Julien Enselme <jujens@jujens.eu> - 2.2.1
 - Bump version number
 - Display version in about dialog

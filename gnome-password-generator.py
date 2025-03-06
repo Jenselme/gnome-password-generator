@@ -35,7 +35,7 @@ from gi.repository import Gio  # noqa
 from gi.repository import GLib  # noqa
 
 
-VERSION = '2.2.1'
+VERSION = '2.2.2'
 PYTHON_VERSION = (3, 4)
 
 NAME = 'Gnome Password Generator'
@@ -309,7 +309,7 @@ class GnomePassordGenerator(Gtk.Application):
         super().__init__()
 
         if ICON_FILE.exists():
-            self.image = GdkPixbuf.Pixbuf.new_from_file(ICON_FILE)
+            self.image = GdkPixbuf.Pixbuf.new_from_file(str(ICON_FILE))
         else:
             self.image = None
 
