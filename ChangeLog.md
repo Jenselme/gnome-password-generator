@@ -1,5 +1,10 @@
 # Changelog
 
+## 2025-03-06 Julien Enselme <jujens@jujens.eu> - 2.2.0
+- add a new character set modeled after 1Password's "Smart Password" here: https://blog.1password.com/a-smarter-password-generator/ Contribution by @allenatdecisiv
+- fix Python Gtk deprecation warnings I was getting when running from bash prompt Contribution by @allenatdecisiv
+- use raw strings where it seemed appropriate Contribution by @allenatdecisiv
+
 
 ## 2017-07-29 Julien Enselme <jujens@jujens.eu> - 2.1.0
 
