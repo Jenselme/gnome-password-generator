@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 ####
-# Copyright (c) 2017 Julien Enslme
+# Copyright (c) 2017-2025 Julien Enselme
 # Copyright (c) 2004-2008 Chris Ladd
 # Copyright (c) 2007 Steve Tyler
 #
@@ -20,6 +20,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
 ####
 
+from pathlib import Path
 import gi
 import os.path
 import sys
@@ -39,7 +40,7 @@ PYTHON_VERSION = (3, 4)
 
 NAME = 'Gnome Password Generator'
 COPYRIGHT = '''Copyright (c) 2004-2008 Chris Ladd
-Copyright (c) 2017 Julien Enselme
+Copyright (c) 2017-2025 Julien Enselme
 '''
 AUTHORS = [
     'Chris Ladd',
@@ -48,8 +49,8 @@ AUTHORS = [
 ]
 WEBSITE = 'https://github.com/Jenselme/gnome-password-generator'
 
-PIXMAPDIR = '/usr/share/pixmaps'
-ICON_FILE = os.path.join(PIXMAPDIR, 'gnome-password-generator.png')
+PIXMAPDIR = Path('/usr/share/pixmaps')
+ICON_FILE = PIXMAPDIR / 'gnome-password-generator.png'
 
 PW_LEN_MIN = 1
 PW_LEN_MAX = 256
@@ -307,7 +308,11 @@ class GnomePassordGenerator(Gtk.Application):
     def __init__(self):
         super().__init__()
 
-        self.image = GdkPixbuf.Pixbuf.new_from_file(ICON_FILE)
+        if ICON_FILE.exists():
+            self.image = GdkPixbuf.Pixbuf.new_from_file(ICON_FILE)
+        else:
+            self.image = None
+
         self.character_sets = (
             CharacterSet(
                 "All printable (excluding space)",
@@ -368,7 +373,8 @@ class GnomePassordGenerator(Gtk.Application):
         about_dialog.set_copyright(COPYRIGHT)
         about_dialog.set_authors(AUTHORS)
         about_dialog.set_website(WEBSITE)
-        about_dialog.set_logo(self.image)
+        if self.image is not None:
+            about_dialog.set_logo(self.image)
 
         about_dialog.set_transient_for(self.main_win)
         about_dialog.connect('response', self.on_close)
