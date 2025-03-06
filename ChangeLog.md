@@ -1,26 +1,29 @@
-2017-07-29 Julien Enselme <jujens@jujens.eu> - 2.1.0
+# Changelog
+
+
+## 2017-07-29 Julien Enselme <jujens@jujens.eu> - 2.1.0
 
 - Can save options used to generate a password
 
-2017-07-05 Julien Enselme <jujens@jujens.eu> - v2.0.3
+## 2017-07-05 Julien Enselme <jujens@jujens.eu> - v2.0.3
 
 - Remove NEWS file
 - Update ChangeLog
 
-2017-07-05 Julien Enselme <jujens@jujens.eu> - v2.0.2
+## 2017-07-05 Julien Enselme <jujens@jujens.eu> - v2.0.2
 
 - Improve Makefile
 
-2017-07-02 Julien Enselme <jujens@jujens.eu> - v2.0.1
+## 2017-07-02 Julien Enselme <jujens@jujens.eu> - v2.0.1
 
 - Add .appdata file
 
-2017-06-21 Julien Enselme <jujens@jujens.eu> - v2.0.0
+## 2017-06-21 Julien Enselme <jujens@jujens.eu> - v2.0.0
 
 - Works on Python 3 and GTK3 instead of Python 2 and GTK2
 - Add a copy to cilpboard button
 
-03-17-2008 Chris Ladd <caladd@particlestorm.net>
+## 03-17-2008 Chris Ladd <caladd@particlestorm.net>
 
 * Makefile:
   Changed build process to remove the extension on gnome-password-generator.py
@@ -28,7 +31,7 @@
 * gnome-password-generator.py:
   Rewrote the menu code to use the new UIManager API in gtk [Bug 1885591]. Added file extension.
 
-08-12-2007 Chris Ladd <caladd@particlestorm.net>
+## 08-12-2007 Chris Ladd <caladd@particlestorm.net>
 
 * gnome-password-generator:
   Added new character set selection feature. Added check
@@ -37,7 +40,7 @@
   Added ability to use urandom for random number generation
   if available.
 
-06-07-2004 Chris Ladd <caladd@particlestorm.net>
+## 06-07-2004 Chris Ladd <caladd@particlestorm.net>
 
 * Makefile:
   Changed it to install the png instead of an svg.
@@ -48,13 +51,13 @@
 * gnome-password-generator.desktop:
   Changed it to use gnome-password-generator.png as the image.
 
-04-05-2004 Chris Ladd <caladd@particlestorm.net>
+## 04-05-2004 Chris Ladd <caladd@particlestorm.net>
 
 * Makefile:
   Added a make all command to the build system. This step
   correctly specifies the pixmap directory.
 
-04-05-2004 Chris Ladd <caladd@particlestorm.net>
+## 04-05-2004 Chris Ladd <caladd@particlestorm.net>
 
 * Makefile:
   Changed the install system to use make install.
@@ -69,7 +72,7 @@
 * gnome-password-generator.desktop:
   Cleanups to the Comment field.
 
-03-15-2004 Chris Ladd <caladd@particlestorm.net>
+## 03-15-2004 Chris Ladd <caladd@particlestorm.net>
 
 * gnome-password-generator:
   Added a check at the beginning of the program for the
