@@ -1,5 +1,8 @@
 # Changelog
 
+## 2025-03-30 Julien Enselme <jujens@jujens.eu> - 2.2.3
+- Correct the all printable characters set.
+
 ## 2025-03-06 Julien Enselme <jujens@jujens.eu> - 2.2.2
 - Correct loading of icon
 

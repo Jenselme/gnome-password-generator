@@ -319,7 +319,7 @@ class GnomePassordGenerator(Gtk.Application):
                 "0123456789"
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 "abcdefghijklmnopqrstuvwxyz"
-                r"!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"
+                r"!\"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"
             ),
             CharacterSet(
                 "Alpha-numeric (a-z, A-Z, 0-9)",
