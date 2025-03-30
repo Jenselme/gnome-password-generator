@@ -35,7 +35,7 @@ from gi.repository import Gio  # noqa
 from gi.repository import GLib  # noqa
 
 
-VERSION = '2.2.2'
+VERSION = '2.2.3'
 PYTHON_VERSION = (3, 4)
 
 NAME = 'Gnome Password Generator'
