@@ -1,3 +1,5 @@
+**Public archive,** the repository is now at https://codeberg.org/Jenselme/gnome-password-generator
+
 Gnome Password Generator is a GUI based secure password generator.
 
 Requirements
